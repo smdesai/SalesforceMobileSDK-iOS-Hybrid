@@ -256,6 +256,13 @@ NSString * const kStoreName           = @"storeName";
     } command:command];
 }
 
+- (NSNumber *)currentTimeInMilliseconds {
+    NSTimeInterval rawTime = 1000 * [[NSDate date] timeIntervalSince1970];
+    rawTime = floor(rawTime);
+    NSNumber *nowVal = @(rawTime);
+    return nowVal;
+}
+
 - (void)pgUpsertSoupEntries:(CDVInvokedUrlCommand *)command
 {
     [self runCommand:^(NSDictionary* argsDict) {
@@ -264,6 +271,7 @@ NSString * const kStoreName           = @"storeName";
         NSString *externalIdPath = [argsDict nonNullObjectForKey:kExternalIdPathArg];
         [SFSDKHybridLogger d:[self class] format:@"pgUpsertSoupEntries with soup name: %@, external ID path: %@", soupName, externalIdPath];
         NSError *error = nil;
+        
         NSArray *resultEntries = [[self getStoreInst:argsDict] upsertEntries:entries toSoup:soupName withExternalIdPath:externalIdPath error:&error];
         if (nil != resultEntries) {
             return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:resultEntries];
@@ -537,6 +545,20 @@ NSString * const kStoreName           = @"storeName";
         storeName = kDefaultSmartStoreName;
     NSString *internalCursorId = [NSString stringWithFormat:@"%@_%@_%d",storeName,cursorId,isGlobal];
     return internalCursorId;
+}
+
+- (void)pgResetPerfDb:(CDVInvokedUrlCommand *)command {
+    [self runCommand:^(NSDictionary* argsDict) {
+        [[self getStoreInst:argsDict] resetPerfDb];
+        return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"OK"];
+    } command:command];
+}
+
+- (void)pgDumpPerfDb:(CDVInvokedUrlCommand *)command {
+    [self runCommand:^(NSDictionary* argsDict) {
+        [[self getStoreInst:argsDict] dumpPerfDb];
+        return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"OK"];
+    } command:command];
 }
 
 - (void)dealloc {

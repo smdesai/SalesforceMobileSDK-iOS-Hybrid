@@ -187,6 +187,13 @@ extern NSString * const kSmartStorePluginIdentifier;
  */
 -(void)pgRemoveAllStores:(CDVInvokedUrlCommand *)command;
     
+
+-(NSNumber *)currentTimeInMilliseconds;
+
+-(void)pgResetPerfDb:(CDVInvokedUrlCommand *)command;
+
+-(void)pgDumpPerfDb:(CDVInvokedUrlCommand *)command;
+
 @end
 
 NS_ASSUME_NONNULL_END
